@@ -1,8 +1,12 @@
-// content.js - EVERYTHING the page shows is here. Edit the text, save, Commit + Push: the page is updated.
+// content.js - BACKUP COPY of the content of the page.
+// Since ClassPulse v27 the page is edited on the page itself: open the page with ?edit at the end of its address,
+// sign in with the ClassPulse account, change the texts, Save. The content is then kept in the ClassPulse database.
+// This file is only shown when the database does not answer. To refresh it: edit mode > "Download backup copy",
+// then replace this file in the repository (Commit + Push).
 // Each text exists in three languages: en (default), ar, fr. A missing translation falls back to English.
-// Lines marked TODO are placeholders to replace.
 
 window.SITE = {
+  slug: "yacine-harkat",       // name of this page in the ClassPulse database (do not change)
   name: { en: "Dr Yacine Harkat", ar: "د. ياسين حركات", fr: "Dr Yacine Harkat" },
   title: { en: "Associate Professor · Researcher", ar: "أستاذ محاضر · باحث", fr: "Maître de conférences · Chercheur" },
   affiliation: {
@@ -19,13 +23,14 @@ window.SITE = {
   initials: "YH",
   email: "yacine.harkat@gmail.com",
   office: { en: "Lab 101, Faculty of Electrical Engineering", ar: "المخبر 101، كلية الهندسة الكهربائية", fr: "Labo 101, Faculté de Génie Électrique" },
+  hours: [],                   // office hours, e.g. { en: "Tuesday 10:00-12:00", ar: "...", fr: "Mardi 10:00-12:00" } (also shown in ClassPulse)
   links: [                      // shown as small buttons under the photo; remove the ones you do not want
     { label: "Google Scholar", url: "" },   // TODO: paste the address of your Scholar profile (empty = hidden)
     { label: "ORCID", url: "" },            // TODO: https://orcid.org/0000-....
     { label: "ResearchGate", url: "https://www.researchgate.net/profile/Yacine-Harkat" },
     { label: "LinkedIn", url: "https://www.linkedin.com/in/yacine-harkat-79625aa4/" },
   ],
-  classpulse: "https://yacineharkat-netizen.github.io/classpulse/",
+  classpulse: "classpulse/",   // ClassPulse is next to this page
 
   // ------------------------------------------------------------------ tabs (order = order on the page)
   tabs: [
@@ -96,7 +101,9 @@ window.SITE = {
           en: "Final-year engineering projects and master theses in IoT, edge computing and network security. Current proposals and office hours are kept up to date in ClassPulse.",
           ar: "مشاريع نهاية الدراسة في الهندسة ومذكرات الماستر في إنترنت الأشياء والحوسبة الطرفية وأمن الشبكات. المقترحات الحالية ومواعيد الاستقبال محدّثة في ClassPulse.",
           fr: "Projets de fin d'études d'ingénieur et mémoires de master en IoT, edge computing et sécurité des réseaux. Les propositions en cours et les créneaux de réception sont tenus à jour dans ClassPulse." } },
-        { type: "button", label: { en: "See the current proposals", ar: "عرض المقترحات الحالية", fr: "Voir les propositions en cours" }, url: "@classpulse" },
+        // proposals: shown here and in the teacher space of ClassPulse, where students can say they are interested
+        { type: "offers", kind: "supervision", title: { en: "Current proposals", ar: "المقترحات الحالية", fr: "Propositions en cours" }, items: [] },
+        { type: "button", label: { en: "Interested? Write to me from ClassPulse", ar: "مهتم؟ راسلني عبر ClassPulse", fr: "Intéressé ? Écrivez-moi depuis ClassPulse" }, url: "@classpulse-teacher" },
       ],
     },
     {
@@ -111,6 +118,7 @@ window.SITE = {
           { t: { en: "Mini-projects for students", ar: "مشاريع صغيرة للطلبة", fr: "Mini-projets pour les étudiants" },
             d: { en: "Open hands-on projects outside the courses: see ClassPulse.", ar: "مشاريع تطبيقية مفتوحة خارج المقاييس: انظر ClassPulse.", fr: "Projets pratiques ouverts hors des cours : voir ClassPulse." } },
         ] },
+        { type: "offers", kind: "miniproject", title: { en: "Mini-projects open to students", ar: "مشاريع صغيرة مفتوحة للطلبة", fr: "Mini-projets ouverts aux étudiants" }, items: [] },
       ],
     },
     {

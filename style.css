@@ -94,7 +94,7 @@ html[dir="rtl"] .facts dt { text-transform: none; letter-spacing: 0; }
 .list li { margin: 6px 0; }
 .btn { display: inline-flex; gap: 8px; align-items: center; margin-top: 4px; background: var(--navy); color: #fff; text-decoration: none; padding: 11px 18px; border-radius: 12px; font-weight: 600; font-size: 14px; }
 .btn:hover { background: var(--accent-ink); }
-html[dir="rtl"] .btn span { transform: scaleX(-1); display: inline-block; }
+html[dir="rtl"] .btn .arrow { transform: scaleX(-1); display: inline-block; }
 .todo { color: #b45309; background: #fff7ed; border-radius: 6px; padding: 0 4px; }  /* placeholders stay visible until replaced */
 
 /* ---------------------------------------------------------------- phone */
@@ -109,3 +109,39 @@ html[dir="rtl"] .btn span { transform: scaleX(-1); display: inline-block; }
   .panel { padding: 22px 18px; }
   .content { overflow: visible; }
 }
+
+/* ---------------------------------------------------------------- offers, office hours */
+.offer .tag { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--accent-ink); font-weight: 700; }
+.offer .level { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.muted-line { color: var(--muted); }
+.hours-title { margin-top: 6px; font-weight: 600; color: #fff; }
+
+/* ---------------------------------------------------------------- edit mode (?edit) */
+.edit-bar { position: sticky; top: 0; z-index: 50; background: #fff7e6; border-bottom: 2px solid #f59e0b; padding: 8px 16px; font-size: 14px; color: #3b2a07; }
+.edit-bar .eb-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.edit-bar input { padding: 5px 8px; border: 1px solid #d6c08a; border-radius: 8px; }
+.edit-bar button { border: 1px solid #d6c08a; background: #fff; border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
+.edit-bar button.on, .edit-bar .eb-save { background: #0e2440; color: #fff; border-color: #0e2440; }
+.edit-bar .eb-save:disabled { opacity: .45; cursor: default; }
+.edit-bar .eb-help { font-size: 12px; color: #6b5420; margin-top: 4px; }
+.edit-bar .eb-user { margin-inline-start: auto; font-size: 12px; }
+.edit-bar .eb-dirty { color: #b45309; }
+.edit-bar .eb-miss { color: #b45309; }
+.edit-bar .eb-msg { color: #b91c1c; margin-top: 4px; }
+body.editing .shell { height: auto; min-height: calc(100vh - 96px); }
+body.editing .content { overflow: visible; }
+body.editing .panel { overflow: visible; }
+.ed { outline: 1px dashed rgba(20,184,166,.55); outline-offset: 2px; border-radius: 4px; cursor: text; min-width: 2em; display: inline-block; }
+.ed:focus { outline: 2px solid var(--accent); background: rgba(20,184,166,.07); }
+.ed.missing { outline: 2px dashed #f59e0b; min-width: 6em; }
+.ed.missing:empty::before { content: attr(data-hint); color: #b8a37a; font-style: italic; }
+.id .ed:focus { background: rgba(255,255,255,.08); }
+.itools { display: inline-flex; gap: 2px; margin-inline-start: 6px; vertical-align: middle; }
+.itools button, .mini { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 6px; font-size: 11px; padding: 1px 5px; cursor: pointer; }
+.id .itools button, .id .mini { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.25); }
+.add { margin: 4px 0 14px; border: 1px dashed var(--accent); background: #effaf8; color: var(--accent-ink); border-radius: 8px; padding: 4px 10px; cursor: pointer; font-weight: 600; }
+.id .add { background: rgba(20,184,166,.15); color: #fff; }
+.photo.editable { cursor: pointer; position: relative; }
+.photo-edit { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.6); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+.flash { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #0e2440; color: #fff; padding: 10px 16px; border-radius: 10px; opacity: 0; transition: opacity .3s; z-index: 60; pointer-events: none; }
+.flash.show { opacity: 1; }
