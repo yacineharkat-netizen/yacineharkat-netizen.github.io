@@ -61,12 +61,26 @@
     const id = location.hash.replace("#", "");
     return SITE.tabs.find((t) => t.id === id) || SITE.tabs[0];
   }
+  // v30: proposals, office hours and announcement come from ClassPulse "My space" (null = not loaded: backup copy shown)
+  let LIVE = null;
+  const PKIND = { pfe: { en: "Final-year project", ar: "مشروع نهاية الدراسة", fr: "Projet de fin d'études" }, master: { en: "Master thesis", ar: "مذكرة ماستر", fr: "Mémoire de master" },
+    licence: { en: "Licence project", ar: "مشروع ليسانس", fr: "Projet de licence" }, mini: { en: "Mini-project", ar: "مشروع صغير", fr: "Mini-projet" }, other: { en: "Project", ar: "مشروع", fr: "Projet" } };
   const OFFER_KIND = { supervision: { en: "Supervision", ar: "تأطير", fr: "Encadrement" }, miniproject: { en: "Mini-project", ar: "مشروع صغير", fr: "Mini-projet" } };
 
   function renderBlock(b, bp) {
     if (b.type === "text") return ed(bp + ".text", "p", "lead");
     if (b.type === "facts") return `<dl class="facts">${b.items.map((f, i) => `<div class="it">${tools(bp + ".items", i)}<dt>${ed(`${bp}.items.${i}.k`)}</dt><dd>${ed(`${bp}.items.${i}.v`)}</dd></div>`).join("")}</dl>${addBtn(bp + ".items", "fact")}`;
     if (b.type === "cards") return `<div class="grid">${b.items.map((c, i) => `<article class="tile it">${tools(bp + ".items", i)}<h3>${ed(`${bp}.items.${i}.t`)}</h3><p>${ed(`${bp}.items.${i}.d`)}</p></article>`).join("")}</div>${addBtn(bp + ".items", "card")}`;
+    if (b.type === "offers" && LIVE) {
+      // v30: the proposals of My space (supervision = projects and theses; miniproject = mini-projects)
+      const head = b.title ? `<h2>${ed(bp + ".title")}</h2>` : "";
+      const list = LIVE.proposals.filter((x) => (b.kind === "miniproject") === (x.kind === "mini"));
+      const note = EDIT && canEdit ? `<p class="muted-line">✏ ${esc({ en: "Proposals are entered in ClassPulse › My space.", ar: "تُدخل المقترحات في ClassPulse › My space.", fr: "Les propositions se saisissent dans ClassPulse › My space." }[lang])}</p>` : "";
+      if (!list.length) return head + note + `<p class="muted-line">${esc({ en: "No proposal at the moment.", ar: "لا توجد مقترحات حاليًا.", fr: "Aucune proposition pour le moment." }[lang])}</p>`;
+      return head + note + `<div class="grid">${list.map((x) => `<article class="tile offer">
+          <span class="tag">${esc(tr(PKIND[x.kind] || PKIND.other))}${x.status === "assigned" ? " · " + esc({ en: "assigned", ar: "مُسند", fr: "attribué" }[lang]) : ""}</span>
+          <h3>${esc(x.title)}</h3>${x.description ? `<p>${esc(x.description)}</p>` : ""}<p class="level">${esc([x.level, x.keywords].filter(Boolean).join(" · "))}</p></article>`).join("")}</div>`;
+    }
     if (b.type === "offers") {
       const head = b.title ? `<h2>${ed(bp + ".title")}</h2>` : "";
       const none = !b.items.length && !(EDIT && canEdit) ? `<p class="muted-line">${esc({ en: "No proposal at the moment.", ar: "لا توجد مقترحات حاليًا.", fr: "Aucune proposition pour le moment." }[lang])}</p>` : "";
@@ -96,10 +110,14 @@
       (EDIT && canEdit ? `<span class="photo-edit">📷 Change</span>` : "");
     $("photo").classList.toggle("editable", EDIT && canEdit);
     const hours = SITE.hours || [];
-    $("contact").innerHTML =
+    // v30: office hours of the next two weeks from My space (instead of the lines typed on the page)
+    const day = (d) => new Date(d + "T12:00:00").toLocaleDateString(shown === "ar" ? "ar-DZ" : shown, { weekday: "short", day: "2-digit", month: "short" });
+    const liveHours = LIVE && LIVE.office.length ? LIVE.office.map((o) => `<span class="${o.cancelled ? "cancelled" : ""}">${esc(day(o.date))} ${esc(o.start)}–${esc(o.end)}${o.place ? " · " + esc(o.place) : ""}${o.cancelled ? " ✕" : ""}</span>`).join("") : "";
+    $("contact").innerHTML = (LIVE && LIVE.announcement ? `<span class="announce">📌 ${esc(LIVE.announcement)}</span>` : "") +
       (EDIT && canEdit ? `<span>✉ ${ed("email")}</span>` : `<a href="mailto:${esc(SITE.email)}">✉ ${esc(SITE.email)}</a>`) +
       (SITE.office ? `<span>⌂ ${ed("office")}</span>` : "") +
-      (hours.length || (EDIT && canEdit) ? `<span class="hours-title">🕘 ${esc({ en: "Office hours", ar: "مواعيد الاستقبال", fr: "Réception" }[shown])}</span>` +
+      (liveHours ? `<span class="hours-title">🕘 ${esc({ en: "Office hours", ar: "مواعيد الاستقبال", fr: "Réception" }[shown])}</span>` + liveHours : "") +
+      (!liveHours && (hours.length || (EDIT && canEdit)) ? `<span class="hours-title">🕘 ${esc({ en: "Office hours", ar: "مواعيد الاستقبال", fr: "Réception" }[shown])}</span>` +
         hours.map((h, i) => `<span class="it">${ed("hours." + i)}${tools("hours", i)}</span>`).join("") + addBtn("hours", "line") : "");
     $("links").innerHTML = EDIT && canEdit
       ? (SITE.links || []).map((l, i) => `<span class="it link-edit">${ed(`links.${i}.label`)}<button class="mini" data-op="url" data-path="links.${i}.url" title="${esc(l.url)}">🔗</button>${tools("links", i)}</span>`).join("") + addBtn("links", "link")
@@ -266,6 +284,7 @@
       if (!r.ok) return;
       const d = await r.json();
       if (d && d.content && d.content.tabs) { SITE = d.content; SITE.slug = SITE.slug || window.SITE.slug; source = "database"; savedAt = d.updated_at; }
+      if (d && d.proposals) LIVE = { proposals: d.proposals || [], office: d.office || [], announcement: d.announcement || "" };   // v30
     } catch (e) { /* database asleep or unreachable: the backup copy stays */ }
   }
 
